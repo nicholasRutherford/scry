@@ -34,3 +34,23 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## Config local postgres
+
+```
+psql -U postgres
+```
+
+```
+create DATABASE scry;
+CREATE USER scry with PASSWORD 'scry';
+GRANT ALL PRIVILEGES ON DATABASE scry to scry;
+ALTER USER scry WITH SUPERUSER;
+```
+
+## Updating DB
+After making changes to prisma schema:
+
+```
+npm exec prisma migrate dev
+```
