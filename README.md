@@ -49,6 +49,7 @@ ALTER USER scry WITH SUPERUSER;
 ```
 
 ## Updating DB
+
 After making changes to prisma schema:
 
 ```
