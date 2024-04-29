@@ -24,7 +24,7 @@ async function getRecentQuestions(): Promise<Question[]> {
   }
 }
 
-const FeedPage: React.FC<{ questions: Question[] }> = async () => {
+async function FeedPage() {
   const questions = await getRecentQuestions();
 
   return (
@@ -37,6 +37,6 @@ const FeedPage: React.FC<{ questions: Question[] }> = async () => {
       ))}
     </div>
   );
-};
+}
 
 export default FeedPage;
