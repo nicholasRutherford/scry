@@ -13,19 +13,28 @@ export async function POST(request: NextRequest) {
   try {
     const { questionId, prediction } = await request.json();
 
-    const newPrediction = await prisma.prediction.create({
-      data: {
+    const upsertedPrediction = await prisma.prediction.upsert({
+      where: {
+        questionId_userId: {
+          questionId,
+          userId: session.user.id,
+        },
+      },
+      create: {
         questionId,
         userId: session.user.id,
         prediction,
       },
+      update: {
+        prediction,
+      },
     });
 
-    return NextResponse.json(newPrediction, { status: 201 });
+    return NextResponse.json(upsertedPrediction, { status: 200 });
   } catch (error) {
-    console.error("Error creating prediction:", error);
+    console.error("Error upserting prediction:", error);
     return NextResponse.json(
-      { error: "Failed to create prediction" },
+      { error: "Failed to upsert prediction" },
       { status: 500 }
     );
   }

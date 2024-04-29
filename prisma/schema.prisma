@@ -104,6 +104,7 @@ model Prediction{
   user      User     @relation(fields: [userId], references: [id])
   isCorrect   Boolean?
   prediction Float
+  @@unique([questionId, userId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
