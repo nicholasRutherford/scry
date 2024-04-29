@@ -83,29 +83,30 @@ model Authenticator {
 }
 
 model Question {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
   title       String
   description String?
   authorId    String
-  author      User     @relation(fields: [authorId], references: [id])
+  author      User         @relation(fields: [authorId], references: [id])
   predictions Prediction[]
-  status      String @default("live")
+  status      String       @default("live")
   answer      Boolean?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Prediction{
-  id          String   @id @default(cuid())
-  questionId  String
-  question    Question @relation(fields: [questionId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  isCorrect   Boolean?
+model Prediction {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  isCorrect  Boolean?
   prediction Float
-  @@unique([questionId, userId])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([questionId, userId])
 }

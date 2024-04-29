@@ -1,33 +1,59 @@
 import React from "react";
-import { Question } from "@prisma/client/edge";
+import { Question, Prediction } from "@prisma/client/edge";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import PredictQuestion from "@/components/question/predict-question";
+import { auth } from "@/auth";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
-async function getQuestionById(id: string): Promise<Question | null> {
+async function getQuestionAndPrediction(
+  id: string,
+  userId: string | undefined
+): Promise<{ question: Question | null; prediction: Prediction | null }> {
   try {
-    const question = await prisma.question.findUnique({
+    const result = await prisma.question.findUnique({
       where: { id },
+      include: {
+        predictions: {
+          where: {
+            userId,
+          },
+          take: 1,
+        },
+      },
     });
-    return question;
+
+    if (!result) {
+      return { question: null, prediction: null };
+    }
+
+    const { predictions, ...question } = result;
+    const prediction = predictions.length > 0 ? predictions[0] : null;
+
+    return { question, prediction };
   } catch (error) {
-    console.error("Error fetching question:", error);
-    return null;
+    console.error("Error fetching question and prediction:", error);
+    return { question: null, prediction: null };
   }
 }
 
 const QuestionPage: React.FC<{ params: { id: string } }> = async ({
   params,
 }) => {
-  const question = await getQuestionById(params.id);
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  const { question, prediction } = await getQuestionAndPrediction(
+    params.id,
+    userId
+  );
 
   if (!question) {
     return <div>Question not found</div>;
   }
 
-  return <PredictQuestion question={question} />;
+  return <PredictQuestion question={question} prediction={prediction} />;
 };
 
 export default QuestionPage;

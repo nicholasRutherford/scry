@@ -1,11 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Question } from "@prisma/client/edge";
+import { Question, Prediction } from "@prisma/client/edge";
 import { useRouter } from "next/navigation";
 import { getWinLossAmounts } from "@/lib/prediction-math";
 
 interface PredictQuestionProps {
   question: Question;
+  prediction: Prediction | null;
 }
 
 interface BetData {
@@ -13,8 +14,11 @@ interface BetData {
   lossAmount: number;
 }
 
-const PredictQuestion: React.FC<PredictQuestionProps> = ({ question }) => {
-  const [betAmount, setBetAmount] = useState(0.5);
+const PredictQuestion: React.FC<PredictQuestionProps> = ({
+  question,
+  prediction,
+}) => {
+  const [betAmount, setBetAmount] = useState(prediction?.prediction || 0.5);
   const [betData, setBetData] = useState<BetData>({
     winAmount: 0,
     lossAmount: 0,
