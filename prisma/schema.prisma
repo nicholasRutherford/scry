@@ -22,6 +22,7 @@ model User {
   questions     Question[]
   // Optional for WebAuthn support
   Authenticator Authenticator[]
+  predictions   Prediction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -84,9 +85,25 @@ model Authenticator {
 model Question {
   id          String   @id @default(cuid())
   title       String
-  description String
+  description String?
   authorId    String
   author      User     @relation(fields: [authorId], references: [id])
+  predictions Prediction[]
+  status      String @default("live")
+  answer      Boolean?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Prediction{
+  id          String   @id @default(cuid())
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  isCorrect   Boolean?
+  prediction Float
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -1,9 +1,12 @@
 "use client";
+import { useRouter } from "next/navigation";
+
 import React, { useState } from "react";
 
 const CreateQuestion: React.FC = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,6 +24,7 @@ const CreateQuestion: React.FC = () => {
       if (response.ok) {
         // Question created successfully, navigate to the question list page
         console.log("Question created successfully");
+        router.push("/feed");
       } else {
         // Handle error if the API request fails
         console.error("Failed to create question");
@@ -54,7 +58,6 @@ const CreateQuestion: React.FC = () => {
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded"
-          required
         ></textarea>
       </div>
       <button

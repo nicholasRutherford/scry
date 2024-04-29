@@ -4,6 +4,7 @@ import ViewQuestion from "@/components/question/view_question";
 import { Question } from "@prisma/client/edge";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
+export const revalidate = 0; // why??
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
@@ -15,6 +16,7 @@ async function getRecentQuestions(): Promise<Question[]> {
       },
       take: 50,
     });
+    console.log("questions received:", questions.length);
     return questions;
   } catch (error) {
     console.error("Error fetching recent questions:", error);
