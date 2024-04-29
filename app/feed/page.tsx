@@ -1,6 +1,6 @@
 // app/feed/page.tsx
 import React from "react";
-import ViewQuestion from "@/components/question/view_question";
+import ViewQuestion from "@/components/question/view-question";
 import { Question } from "@prisma/client/edge";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
