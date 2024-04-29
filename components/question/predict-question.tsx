@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Question } from "@prisma/client/edge";
 import { useRouter } from "next/navigation";
+import { getWinLossAmounts } from "@/lib/prediction-math";
 
 interface PredictQuestionProps {
   question: Question;
@@ -11,20 +12,6 @@ interface BetData {
   winAmount: number;
   lossAmount: number;
 }
-
-const getWinLossAmounts = (p: number): BetData => {
-  if (p <= 0.5) {
-    p = 1 - p;
-  }
-
-  const scale = Math.log(50 / 10);
-  const shiftedP = p - 0.5;
-
-  const winAmount = Math.round(10 * Math.exp(shiftedP * scale));
-
-  const lossAmount = Math.round((winAmount * p) / (1 - p));
-  return { winAmount, lossAmount };
-};
 
 const PredictQuestion: React.FC<PredictQuestionProps> = ({ question }) => {
   const [betAmount, setBetAmount] = useState(0.5);
