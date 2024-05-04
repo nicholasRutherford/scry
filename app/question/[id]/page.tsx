@@ -2,8 +2,9 @@ import React from "react";
 import { Question, Prediction } from "@prisma/client/edge";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
-import PredictQuestion from "@/components/question/predict-question";
+import PredictQuestion from "@/components/question/prediction-slider";
 import { auth } from "@/auth";
+import ViewQuestion from "@/components/question/view-question";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
@@ -53,7 +54,11 @@ const QuestionPage: React.FC<{ params: { id: string } }> = async ({
     return <div>Question not found</div>;
   }
 
-  return <PredictQuestion question={question} prediction={prediction} />;
+  return (
+    <div>
+      <ViewQuestion question={question} prediction={prediction} />
+    </div>
+  );
 };
 
 export default QuestionPage;

@@ -4,19 +4,29 @@ import ViewQuestion from "@/components/question/view-question";
 import { Question } from "@prisma/client/edge";
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
+import { auth } from "@/auth";
 export const revalidate = 0; // why??
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
-async function getRecentQuestions(): Promise<Question[]> {
+async function getRecentQuestions(
+  userId: string | undefined
+): Promise<Question[]> {
   try {
     const questions = await prisma.question.findMany({
       orderBy: {
         createdAt: "desc",
       },
       take: 50,
+      include: {
+        predictions: {
+          where: {
+            userId: userId,
+          },
+          take: 1,
+        },
+      },
     });
-    console.log("questions received:", questions.length);
     return questions;
   } catch (error) {
     console.error("Error fetching recent questions:", error);
@@ -25,14 +35,19 @@ async function getRecentQuestions(): Promise<Question[]> {
 }
 
 async function FeedPage() {
-  const questions = await getRecentQuestions();
+  const session = await auth();
+  const userId = session?.user?.id;
+  const questions = await getRecentQuestions(userId);
 
   return (
-    <div>
+    <div className="flex flex-col m-4">
       <h1 className="text-2xl font-bold mb-4">Recent Questions</h1>
       {questions.map((question) => (
-        <div key={question.id} className="mb-4">
-          <ViewQuestion question={question} />
+        <div key={question.id} className="mb-4 min-w-6">
+          <ViewQuestion
+            question={question}
+            prediction={question.predictions[0]}
+          />
         </div>
       ))}
     </div>
