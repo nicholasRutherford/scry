@@ -78,7 +78,7 @@ const PredictionSlider: React.FC<PredictionSliderProps> = ({
           defaultValue={1.5}
           className="max-w-md"
           formatOptions={{ signDisplay: "always" }}
-          onChange={setBetAmount}
+          onChange={(value) => setBetAmount(value as number)}
           onChangeEnd={() => handlePlaceBet()}
           value={betAmount}
           startContent={<p>NO</p>}
