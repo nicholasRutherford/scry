@@ -5,12 +5,13 @@ import { withAccelerate } from "@prisma/extension-accelerate";
 import PredictQuestion from "@/components/question/prediction-slider";
 import { auth } from "@/auth";
 import ViewQuestion from "@/components/question/view-question";
+import CreatorEdit from "@/components/question/creator-edit";
 
 const prisma = new PrismaClient().$extends(withAccelerate());
 
 async function getQuestionAndPrediction(
   id: string,
-  userId: string | undefined
+  profileId: string | undefined
 ): Promise<{ question: Question | null; prediction: Prediction | null }> {
   try {
     const result = await prisma.question.findUnique({
@@ -18,7 +19,7 @@ async function getQuestionAndPrediction(
       include: {
         predictions: {
           where: {
-            userId,
+            profileId,
           },
           take: 1,
         },
@@ -43,11 +44,11 @@ const QuestionPage: React.FC<{ params: { id: string } }> = async ({
   params,
 }) => {
   const session = await auth();
-  const userId = session?.user?.id;
+  const profileId = session?.user?.profileId;
 
   const { question, prediction } = await getQuestionAndPrediction(
     params.id,
-    userId
+    profileId
   );
 
   if (!question) {
@@ -57,6 +58,7 @@ const QuestionPage: React.FC<{ params: { id: string } }> = async ({
   return (
     <div>
       <ViewQuestion question={question} prediction={prediction} />
+      {profileId === question.authorId && <CreatorEdit question={question} />}
     </div>
   );
 };

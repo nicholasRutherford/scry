@@ -5,7 +5,8 @@ import { auth } from "@/auth";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) {
+
+  if (!session?.user?.profileId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const prisma = new PrismaClient().$extends(withAccelerate());
@@ -17,7 +18,7 @@ export async function POST(request: NextRequest) {
       data: {
         title,
         description,
-        authorId: session.user.id,
+        authorId: session?.user?.profileId,
       },
     });
 

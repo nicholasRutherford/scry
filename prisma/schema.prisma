@@ -11,18 +11,34 @@ datasource db {
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
+model Profile {
+  id String @id @default(cuid())
+
+  userName     String?
+  cachedProfit Int     @default(0)
+
+  questions   Question[]
+  predictions Prediction[]
+  userId      String       @unique
+  user        User         @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model User {
-  id            String          @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String          @unique
+  email         String    @unique
   emailVerified DateTime?
   image         String?
-  accounts      Account[]
-  sessions      Session[]
-  questions     Question[]
+
+  accounts Account[]
+  sessions Session[]
+  profile  Profile?
+
   // Optional for WebAuthn support
   Authenticator Authenticator[]
-  predictions   Prediction[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -87,10 +103,10 @@ model Question {
   title       String
   description String?
   authorId    String
-  author      User         @relation(fields: [authorId], references: [id])
+  author      Profile      @relation(fields: [authorId], references: [id])
   predictions Prediction[]
   status      String       @default("live")
-  answer      Boolean?
+  resolution  Boolean?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -100,13 +116,15 @@ model Prediction {
   id         String   @id @default(cuid())
   questionId String
   question   Question @relation(fields: [questionId], references: [id])
-  userId     String
-  user       User     @relation(fields: [userId], references: [id])
+  profileId  String
+  profile    Profile  @relation(fields: [profileId], references: [id])
   isCorrect  Boolean?
   prediction Float
+  amountWon  Int?
+  amountLost Int?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([questionId, userId])
+  @@unique([questionId, profileId])
 }

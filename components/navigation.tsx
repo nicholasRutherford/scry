@@ -13,10 +13,6 @@ import {
 } from "@nextui-org/react";
 import { ThemeSwitcher } from "./theme-switcher";
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default async function Navigation() {
   const session = await auth();
   const userId = session?.user?.id;
@@ -50,7 +46,7 @@ export default async function Navigation() {
           </NavbarItem>
         ) : (
           <NavbarItem className="hidden lg:flex">
-            <Link href="#">Sign up/ log in</Link>
+            <Link href="/api/auth/signin">Sign up/ log in</Link>
           </NavbarItem>
         )}
       </NavbarContent>

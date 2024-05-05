@@ -1,17 +1,22 @@
 // app/feed/page.tsx
 import React from "react";
 import ViewQuestion from "@/components/question/view-question";
-import { Question } from "@prisma/client/edge";
+import { Question, Prediction } from "@prisma/client/edge";
+
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { auth } from "@/auth";
 export const revalidate = 0; // why??
 
+type QuestionWithPrediction = Question & {
+  predictions: Prediction[] | null;
+};
+
 const prisma = new PrismaClient().$extends(withAccelerate());
 
 async function getRecentQuestions(
-  userId: string | undefined
-): Promise<Question[]> {
+  profileId: string | undefined
+): Promise<QuestionWithPrediction[]> {
   try {
     const questions = await prisma.question.findMany({
       orderBy: {
@@ -21,7 +26,7 @@ async function getRecentQuestions(
       include: {
         predictions: {
           where: {
-            userId: userId,
+            profileId: profileId,
           },
           take: 1,
         },
@@ -36,8 +41,8 @@ async function getRecentQuestions(
 
 async function FeedPage() {
   const session = await auth();
-  const userId = session?.user?.id;
-  const questions = await getRecentQuestions(userId);
+  const profileId = session?.user?.profileId;
+  const questions = await getRecentQuestions(profileId);
 
   return (
     <div className="flex flex-col m-4">
@@ -46,7 +51,7 @@ async function FeedPage() {
         <div key={question.id} className="mb-4 min-w-6">
           <ViewQuestion
             question={question}
-            prediction={question.predictions[0]}
+            prediction={question.predictions?.[0] ?? null}
           />
         </div>
       ))}

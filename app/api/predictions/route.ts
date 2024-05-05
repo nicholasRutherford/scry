@@ -5,7 +5,8 @@ import { auth } from "@/auth";
 
 export async function POST(request: NextRequest) {
   const session = await auth();
-  if (!session?.user?.id) {
+  const profileId = session?.user?.profileId;
+  if (!profileId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   const prisma = new PrismaClient().$extends(withAccelerate());
@@ -15,14 +16,14 @@ export async function POST(request: NextRequest) {
 
     const upsertedPrediction = await prisma.prediction.upsert({
       where: {
-        questionId_userId: {
+        questionId_profileId: {
           questionId,
-          userId: session.user.id,
+          profileId: profileId,
         },
       },
       create: {
         questionId,
-        userId: session.user.id,
+        profileId: profileId,
         prediction,
       },
       update: {

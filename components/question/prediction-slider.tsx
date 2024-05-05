@@ -71,8 +71,8 @@ const PredictionSlider: React.FC<PredictionSliderProps> = ({
           label={`Predicting: ${betAmount >= 0.5 ? "YES" : "NO"}`}
           size="lg"
           step={0.02}
-          maxValue={0.9}
-          minValue={0.1}
+          maxValue={0.91}
+          minValue={0.09}
           color={betAmount >= 0.5 ? "success" : "warning"}
           fillOffset={0.5}
           defaultValue={1.5}

@@ -7,7 +7,7 @@ import { Divider } from "@nextui-org/react";
 
 interface QuestionDisplayProps {
   question: Question;
-  prediction: Prediction;
+  prediction: Prediction | null;
 }
 
 const ViewQuestion: React.FC<QuestionDisplayProps> = ({
